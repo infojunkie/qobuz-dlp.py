@@ -64,7 +64,7 @@ def _reset_config(config_file):
     logging.info(
         f"{GREEN}Config file updated. Edit more options in {config_file}"
         "\nso you don't have to call custom flags every time you run "
-        "a qobuz-dl command."
+        "a qobuz-dlp command."
     )
 
 
@@ -144,7 +144,7 @@ def main():
         if not arguments.reset:
             sys.exit(
                 f"{RED}Your config file is corrupted: {error}! "
-                "Run 'qobuz-dl -r' to fix this."
+                "Run 'qobuz-dlp -r' to fix this."
             )
 
     if arguments.reset:

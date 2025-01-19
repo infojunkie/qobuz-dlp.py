@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-pkg_name = "qobuz-dl"
+pkg_name = "qobuz-dlp"
 
 
 def read_file(fname):
@@ -20,18 +20,17 @@ requirements = [
 
 setup(
     name=pkg_name,
-    version="0.9.9.10",
-    author="Vitiko",
-    author_email="vhnz98@gmail.com",
+    version="0.10.0",
+    author="infojunkie",
+    author_email="karim.ratib@gmail.com",
     description="The complete Lossless and Hi-Res music downloader for Qobuz",
     long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/vitiko98/Qobuz-DL",
+    url="https://github.com/infojunkie/qobuz-dlp",
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "qobuz-dl = qobuz_dl:main",
-            "qdl = qobuz_dl:main",
+            "qobuz-dlp = qobuz_dl:main",
         ],
     },
     packages=find_packages(),

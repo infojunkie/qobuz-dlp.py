@@ -191,7 +191,7 @@ class QobuzDL:
                 logger.error(f"{RED}Invalid text file: {e}")
                 return
             logger.info(
-                f"{YELLOW}qobuz-dl will download {len(urls)}"
+                f"{YELLOW}qobuz-dlp will download {len(urls)}"
                 f" urls from file: {txt_file}"
             )
             self.download_list_of_urls(urls)
@@ -203,7 +203,7 @@ class QobuzDL:
 
         logger.info(
             f'{YELLOW}Searching {self.lucky_type}s for "{query}".\n'
-            f"{YELLOW}qobuz-dl will attempt to download the first "
+            f"{YELLOW}qobuz-dlp will attempt to download the first "
             f"{self.lucky_limit} results."
         )
         results = self.search_by_type(query, self.lucky_type, self.lucky_limit, True)
