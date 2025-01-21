@@ -161,7 +161,7 @@ qobuz.handle_url("https://play.qobuz.com/album/va4j3hdlwaubc")
 Attributes, methods and parameters have been named as self-explanatory as possible.
 
 ## Credits
-- `qobuz-dlp` is a continuation of the work started by `qobuz-dlp`, written by vitiko98.
+- `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98.
 - `qobuz-dl` is inspired in the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.
 
 ## Disclaimer
