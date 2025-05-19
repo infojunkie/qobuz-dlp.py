@@ -155,6 +155,12 @@ def qobuz_dl_args(
         action="store_true",
         help="show configuration",
     )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="show version information",
+    )
 
     subparsers = parser.add_subparsers(
         title="commands",

@@ -4,6 +4,7 @@ import logging
 import glob
 import os
 import sys
+import importlib_metadata
 
 from qobuz_dl.bundle import Bundle
 from qobuz_dl.color import GREEN, RED, YELLOW
@@ -151,9 +152,14 @@ def main():
         sys.exit(_reset_config(CONFIG_FILE))
 
     if arguments.show_config:
-        print(f"Configuation: {CONFIG_FILE}\nDatabase: {QOBUZ_DB}\n---")
+        print(f"Configuration: {CONFIG_FILE}\nDatabase: {QOBUZ_DB}\n---")
         with open(CONFIG_FILE, "r") as f:
             print(f.read())
+        sys.exit()
+
+    if arguments.version:
+        version = importlib_metadata.version("qobuz-dlp")
+        print(f"qobuz-dlp v{version}")
         sys.exit()
 
     if arguments.purge:

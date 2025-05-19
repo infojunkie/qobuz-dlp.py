@@ -20,10 +20,10 @@ requirements = [
 
 setup(
     name=pkg_name,
-    version="0.10.0",
+    version="0.11.0",
     author="infojunkie",
     author_email="karim.ratib@gmail.com",
-    description="The complete Lossless and Hi-Res music downloader for Qobuz",
+    description="The complete lossless and hi-res music downloader for Qobuz.",
     long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
     url="https://github.com/infojunkie/qobuz-dlp",

@@ -119,12 +119,13 @@ By default, `qobuz-dlp` will skip already downloaded items by ID with the messag
 
 ## Usage
 ```
-usage: qobuz-dlp [-h] [-r] {fun,dl,lucky} ...
+Usage: qobuz-dlp [-h] [-r] {fun,dl,lucky} ...
 
 The ultimate Qobuz music downloader.
-See usage examples on https://github.com/infojunkie/qobuz-dlp
+See usage examples at https://github.com/infojunkie/qobuz-dlp
 
 optional arguments:
+  -v, --version   show version information
   -h, --help      show this help message and exit
   -r, --reset     create/reset config file
   -p, --purge     purge/delete downloaded-IDs database

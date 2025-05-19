@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Tuple
+import json
 
 import requests
 from pathvalidate import sanitize_filename, sanitize_filepath
@@ -113,19 +114,19 @@ class Download:
                 pass
         media_numbers = [track["media_number"] for track in meta["tracks"]["items"]]
         is_multiple = True if len([*{*media_numbers}]) > 1 else False
-        for i in meta["tracks"]["items"]:
-            parse = self.client.get_track_url(i["id"], fmt_id=self.quality)
+        for track in meta["tracks"]["items"]:
+            parse = self.client.get_track_url(track["id"], fmt_id=self.quality)
             if "sample" not in parse and parse["sampling_rate"]:
                 is_mp3 = True if int(self.quality) == 5 else False
                 self._download_and_tag(
                     dirn,
                     count,
                     parse,
-                    i,
+                    track,
                     meta,
                     False,
                     is_mp3,
-                    i["media_number"] if is_multiple else None,
+                    track["media_number"] if is_multiple else None,
                 )
             else:
                 logger.info(f"{OFF}Demo. Skipping")
