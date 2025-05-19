@@ -140,7 +140,8 @@ qobuz-dlp -r
 By default, `qobuz-dlp` will skip already downloaded items by ID with the message `This release ID ({item_id}) was already downloaded`. To avoid this check, add the flag `--no-db` at the end of a command. In extreme cases (e.g. lost collection), you can run `qobuz-dlp -p` to completely reset the database.
 
 ## Development
-Using `qobuz-dlp` as a module is really easy. Basically, the only thing you need is `QobuzDL` from `core`.
+- Install [`poetry`](https://python-poetry.org/docs/#installation)
+- `poetry install && poetry build && pip install .`
 
 ```python
 import logging
