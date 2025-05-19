@@ -4,13 +4,13 @@ import logging
 import glob
 import os
 import sys
-import importlib_metadata
 
 from qobuz_dl.bundle import Bundle
 from qobuz_dl.color import GREEN, RED, YELLOW
 from qobuz_dl.commands import qobuz_dl_args
 from qobuz_dl.core import QobuzDL
 from qobuz_dl.downloader import DEFAULT_FOLDER, DEFAULT_TRACK
+from qobuz_dl import __NAME__, __VERSION__
 
 logging.basicConfig(
     level=logging.INFO,
@@ -158,8 +158,7 @@ def main():
         sys.exit()
 
     if arguments.version:
-        version = importlib_metadata.version("qobuz-dlp")
-        print(f"qobuz-dlp v{version}")
+        print(f"{__NAME__} v{__VERSION__}")
         sys.exit()
 
     if arguments.purge:

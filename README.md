@@ -1,5 +1,5 @@
 # qobuz-dlp
-Search, explore and download Lossless and Hi-Res music from [Qobuz](https://www.qobuz.com/).
+A complete lossless and hi-res music downloader for [Qobuz](https://www.qobuz.com/).
 
 This is a fork of the [original repo which has gone unmaintained](https://github.com/vitiko98/qobuz-dl).
 
@@ -30,6 +30,28 @@ pip3 install --upgrade qobuz-dlp
 - Run qobuz-dlp and enter your credentials
 ```bash
 qobuz-dlp # or qobuz-dlp.exe for Windows
+```
+
+## Usage
+```
+A complete lossless and hi-res music downloader for Qobuz.
+See usage examples at https://github.com/infojunkie/qobuz-dlp.py?tab=readme-ov-file#examples.
+
+options:
+  -h, --help         show this help message and exit
+  -v, --version      show version information
+  -r, --reset        create/reset config file
+  -p, --purge        purge/delete downloaded-IDs database
+  -c, --show-config  show configuration
+
+commands:
+  run qobuz-dlp <command> --help for more info
+  (e.g. qobuz-dlp fun --help)
+
+  {fun,dl,lucky}
+    fun              interactive mode
+    dl               input mode
+    lucky            lucky mode
 ```
 
 ## Examples
@@ -117,30 +139,7 @@ qobuz-dlp -r
 
 By default, `qobuz-dlp` will skip already downloaded items by ID with the message `This release ID ({item_id}) was already downloaded`. To avoid this check, add the flag `--no-db` at the end of a command. In extreme cases (e.g. lost collection), you can run `qobuz-dlp -p` to completely reset the database.
 
-## Usage
-```
-Usage: qobuz-dlp [-h] [-r] {fun,dl,lucky} ...
-
-The ultimate Qobuz music downloader.
-See usage examples at https://github.com/infojunkie/qobuz-dlp
-
-optional arguments:
-  -v, --version   show version information
-  -h, --help      show this help message and exit
-  -r, --reset     create/reset config file
-  -p, --purge     purge/delete downloaded-IDs database
-
-commands:
-  run qobuz-dlp <command> --help for more info
-  (e.g. qobuz-dlp fun --help)
-
-  {fun,dl,lucky}
-    fun           interactive mode
-    dl            input mode
-    lucky         lucky mode
-```
-
-## Module usage
+## Development
 Using `qobuz-dlp` as a module is really easy. Basically, the only thing you need is `QobuzDL` from `core`.
 
 ```python
@@ -161,10 +160,8 @@ qobuz.handle_url("https://play.qobuz.com/album/va4j3hdlwaubc")
 
 Attributes, methods and parameters have been named as self-explanatory as possible.
 
-## Credits
-- `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98.
-- `qobuz-dl` is inspired in the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.
-
-## Disclaimer
+## Disclaimer and credits
 * This tool was written for educational purposes. I will not be responsible if you use this program in bad faith. By using it, you are accepting the [Qobuz API Terms of Use](https://static.qobuz.com/apps/api/QobuzAPI-TermsofUse.pdf).
 * `qobuz-dlp` is not affiliated with Qobuz
+* `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98.
+* `qobuz-dl` is inspired in the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.

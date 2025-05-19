@@ -1,6 +1,5 @@
 import argparse
 
-
 def fun_args(subparsers, default_limit):
     interactive = subparsers.add_parser(
         "fun",
@@ -135,10 +134,15 @@ def qobuz_dl_args(
     parser = argparse.ArgumentParser(
         prog="qobuz-dlp",
         description=(
-            "The ultimate Qobuz music downloader.\nSee usage"
-            " examples on https://github.com/infojunkie/qobuz-dlp"
+            "A complete lossless and hi-res music downloader for Qobuz.\nSee usage examples at https://github.com/infojunkie/qobuz-dlp.py?tab=readme-ov-file#examples."
         ),
         formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="show version information",
     )
     parser.add_argument(
         "-r", "--reset", action="store_true", help="create/reset config file"
@@ -150,18 +154,11 @@ def qobuz_dl_args(
         help="purge/delete downloaded-IDs database",
     )
     parser.add_argument(
-        "-sc",
+        "-c",
         "--show-config",
         action="store_true",
         help="show configuration",
     )
-    parser.add_argument(
-        "-v",
-        "--version",
-        action="store_true",
-        help="show version information",
-    )
-
     subparsers = parser.add_subparsers(
         title="commands",
         description="run qobuz-dlp <command> --help for more info\n(e.g. qobuz-dlp fun --help)",
