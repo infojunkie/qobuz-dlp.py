@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "qobuz-dlp"
+version = "0.12.0"
+description = "A complete lossless and hi-res music downloader for Qobuz."
+authors = ["infojunkie <karim.ratib@gmail.com>", "Vitiko <vhnz98@gmail.com>"]
+repository = "https://github.com/infojunkie/qobuz-dlp.py"
+readme = "README.md"
+packages = [{include = "qobuz_dl", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+mutagen = "^1.46.0"
+importlib-metadata = "^6.8.0"
+pathvalidate = "^3.2.0"
+pick = "1.6.0"
+requests = "^2.32.3"
+tqdm = "^4.67.1"
+beautifulsoup4 = "^4.13.4"
+colorama = "^0.4.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
+pytest-mock = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+qobuz-dlp = "qobuz_dl.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = "src"
