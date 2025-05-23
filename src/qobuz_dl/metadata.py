@@ -108,30 +108,31 @@ def _embed_id3_img(root_dir, audio: id3.ID3):
 
 
 def _get_artists(track, album, is_track):
-    artist = track.get("performer", {}).get("name")  # TRACK ARTIST
+    artist = track.get("performer", {}).get("name", "")  # TRACK ARTIST
     if not(artist):
         if is_track:
-            artist = track["album"]["artist"]["name"]  # ALBUM ARTIST
+            artist = track.get("album", {}).get("artist", {}).get("name", "")  # ALBUM ARTIST
         else:
-            artist = album["artist"]["name"]
+            artist = album.get("artist", {}).get("name", "")
 
     extra_artists = [
         [p.strip() for p in performer.split(",")] for performer in track["performers"].split(" - ")
     ]
 
     artists = [artist] + [
-        extra_artist[0] for extra_artist in extra_artists if extra_artist[0].casefold() != artist.casefold() and "MainArtist" in extra_artist
+        extra_artist[0] for extra_artist in extra_artists if extra_artist[0].casefold() != artist.casefold() and
+        ("MainArtist" in extra_artist or "FeaturedArtist" in extra_artist)
     ]
     return ", ".join(filter(None, artists))
 
 
 def _get_composers(track, album, is_track):
-    composer = track.get("composer", {}).get("name")  # TRACK COMPOSER
+    composer = track.get("composer", {}).get("name", "")  # TRACK COMPOSER
     if not(composer):
         if is_track:
-            composer = track["album"]["composer"]["name"]  # ALBUM COMPOSER
+            composer = track.get("album", {}).get("composer", {}).get("name", "")  # ALBUM COMPOSER
         else:
-            composer = album["composer"]["name"]
+            composer = album.get("composer", {}).get("name", "")
 
     extra_composers = [
         [p.strip() for p in performer.split(",")] for performer in track["performers"].split(" - ")
