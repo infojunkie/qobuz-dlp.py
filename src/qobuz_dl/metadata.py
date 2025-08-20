@@ -147,7 +147,7 @@ def _get_composers(track, album, is_track):
 
 # Use KeyError catching instead of dict.get to avoid empty tags
 def tag_flac(
-    filename, root_dir, final_name, track: dict, album, is_track=True, em_image=False
+    filename, root_dir, final_name, track: dict, album, is_track=True, embed_art=False
 ):
     """
     Tag a FLAC file
@@ -158,7 +158,7 @@ def tag_flac(
     :param dict d: Track dictionary from Qobuz_client
     :param dict album: Album dictionary from Qobuz_client
     :param bool is_track
-    :param bool em_image: Embed cover art into file
+    :param bool embed_art: Embed cover art into file
     """
     audio = FLAC(filename)
 
@@ -181,23 +181,23 @@ def tag_flac(
         audio["TRACKTOTAL"] = str(track["album"]["tracks_count"])
         audio["ALBUM"] = track["album"]["title"]
         audio["DATE"] = track["album"]["release_date_original"].split("-")[0]
-        audio["COPYRIGHT"] = _format_copyright(track.get("copyright", ""))
+        audio["COPYRIGHT"] = _format_copyright(track.get("copyright", "") or "")
     else:
         audio["GENRE"] = _format_genres(album["genres_list"])
         audio["ALBUMARTIST"] = album["artist"]["name"]
         audio["TRACKTOTAL"] = str(album["tracks_count"])
         audio["ALBUM"] = album["title"]
         audio["DATE"] = album["release_date_original"].split("-")[0]
-        audio["COPYRIGHT"] = _format_copyright(album.get("copyright", ""))
+        audio["COPYRIGHT"] = _format_copyright(album.get("copyright", "") or "")
 
-    if em_image:
+    if embed_art:
         _embed_flac_img(root_dir, audio)
 
     audio.save()
     os.rename(filename, final_name)
 
 
-def tag_mp3(filename, root_dir, final_name, track, album, is_track=True, em_image=False):
+def tag_mp3(filename, root_dir, final_name, track, album, is_track=True, embed_art=False):
     """
     Tag an mp3 file
 
@@ -206,7 +206,7 @@ def tag_mp3(filename, root_dir, final_name, track, album, is_track=True, em_imag
     :param str final_name: Final name of the mp3 file (complete path)
     :param dict d: Track dictionary from Qobuz_client
     :param bool is_track
-    :param bool em_image: Embed cover art into file
+    :param bool embed_art: Embed cover art into file
     """
 
     try:
@@ -247,7 +247,7 @@ def tag_mp3(filename, root_dir, final_name, track, album, is_track=True, em_imag
         id3tag = ID3_LEGEND[k]
         audio[id3tag.__name__] = id3tag(encoding=3, text=v)
 
-    if em_image:
+    if embed_art:
         _embed_id3_img(root_dir, audio)
 
     audio.save(filename, "v2_version=3")
