@@ -126,6 +126,9 @@ def add_common_arg(custom_parser, default_folder, default_quality):
         artist, and deluxe/live/collection albums. Gives preference to remastered
         albums, high bit depth/dynamic range, and low sampling rates (to save space).""",
     )
+    custom_parser.add_argument(
+        "--booklet-only", action="store_true", help="only download album booklet"
+    )
 
 
 def qobuz_dl_args(

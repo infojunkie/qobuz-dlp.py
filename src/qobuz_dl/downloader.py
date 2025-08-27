@@ -42,8 +42,9 @@ class Download:
         downgrade_quality: bool = False,
         cover_og_quality: bool = False,
         no_cover: bool = False,
-        folder_format=None,
-        track_format=None,
+        folder_format = None,
+        track_format = None,
+        booklet_only: bool = False
     ):
         self.client = client
         self.item_id = item_id
@@ -56,6 +57,7 @@ class Download:
         self.no_cover = no_cover
         self.folder_format = folder_format or DEFAULT_FOLDER
         self.track_format = track_format or DEFAULT_TRACK
+        self.booklet_only = booklet_only
 
     def download_id_by_type(self, track=True):
         if not track:
@@ -102,7 +104,7 @@ class Download:
         dirn = os.path.join(self.path, sanitized_title)
         os.makedirs(dirn, exist_ok=True)
 
-        if self.no_cover:
+        if self.no_cover or self.booklet_only:
             logger.info(f"{OFF}Skipping cover")
         else:
             _get_extra(meta["image"]["large"], dirn, og_quality=self.cover_og_quality)
@@ -112,6 +114,10 @@ class Download:
                 _get_extra(meta["goodies"][0]["url"], dirn, "booklet.pdf")
             except:  # noqa
                 pass
+
+        if self.booklet_only:
+            return
+
         media_numbers = [track["media_number"] for track in meta["tracks"]["items"]]
         is_multiple = True if len([*{*media_numbers}]) > 1 else False
         for track in meta["tracks"]["items"]:
@@ -134,6 +140,9 @@ class Download:
         logger.info(f"{GREEN}Completed")
 
     def download_track(self):
+        if self.booklet_only:
+            return
+
         parse = self.client.get_track_url(self.item_id, self.quality)
 
         if "sample" not in parse and parse["sampling_rate"]:

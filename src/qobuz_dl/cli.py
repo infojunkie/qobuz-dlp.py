@@ -60,6 +60,7 @@ def _reset_config(config_file):
     config["DEFAULT"]["folder_format"] = DEFAULT_FOLDER
     config["DEFAULT"]["track_format"] = DEFAULT_TRACK
     config["DEFAULT"]["smart_discography"] = "false"
+    config["DEFAULT"]["booklet_only"] = "false"
     with open(config_file, "w") as configfile:
         config.write(configfile)
     logging.info(
@@ -133,6 +134,7 @@ def main():
         smart_discography = config.getboolean("DEFAULT", "smart_discography")
         folder_format = config["DEFAULT"]["folder_format"]
         track_format = config["DEFAULT"]["track_format"]
+        booklet_only = config.getboolean("DEFAULT", "booklet_only")
 
         secrets = [
             secret for secret in config["DEFAULT"]["secrets"].split(",") if secret
@@ -177,10 +179,11 @@ def main():
         quality_fallback=not arguments.no_fallback or not no_fallback,
         cover_og_quality=arguments.og_cover or og_cover,
         no_cover=arguments.no_cover or no_cover,
-        downloads_db=None if no_database or arguments.no_db else QOBUZ_DB,
+        downloads_db=None if no_database or arguments.no_db or booklet_only or arguments.booklet_only else QOBUZ_DB,
         folder_format=arguments.folder_format or folder_format,
         track_format=arguments.track_format or track_format,
         smart_discography=arguments.smart_discography or smart_discography,
+        booklet_only=arguments.booklet_only or booklet_only,
     )
     qobuz.initialize_client(email, password, app_id, secrets)
 

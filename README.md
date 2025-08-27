@@ -165,4 +165,4 @@ Attributes, methods and parameters have been named as self-explanatory as possib
 * This tool was written for educational purposes. I will not be responsible if you use this program in bad faith. By using it, you are accepting the [Qobuz API Terms of Use](https://static.qobuz.com/apps/api/QobuzAPI-TermsofUse.pdf).
 * `qobuz-dlp` is not affiliated with Qobuz
 * `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98.
-* `qobuz-dl` is inspired in the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.
+* `qobuz-dl` was inspired by the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.
