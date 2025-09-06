@@ -162,6 +162,11 @@ def qobuz_dl_args(
         action="store_true",
         help="show configuration",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="show debug information",
+    )
     subparsers = parser.add_subparsers(
         title="commands",
         description="run qobuz-dlp <command> --help for more info\n(e.g. qobuz-dlp fun --help)",

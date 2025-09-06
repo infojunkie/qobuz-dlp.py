@@ -170,6 +170,10 @@ def main():
             pass
         sys.exit(f"{GREEN}The database was deleted.")
 
+    if arguments.debug:
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+
     qobuz = QobuzDL(
         arguments.directory,
         arguments.quality,

@@ -5,8 +5,9 @@
 import hashlib
 import logging
 import time
-
 import requests
+from http.client import HTTPConnection
+import pprint
 
 from qobuz_dl.exceptions import (
     AuthenticationError,
@@ -40,6 +41,13 @@ class Client:
         self.sec = None
         self.auth(email, pwd)
         self.cfg_setup()
+
+        '''Switches on logging of the requests module.'''
+        if logging.getLogger().level == logging.DEBUG:
+            HTTPConnection.debuglevel = 1
+            requests_log = logging.getLogger("requests.packages.urllib3")
+            requests_log.setLevel(logging.DEBUG)
+            requests_log.propagate = True
 
     def api_call(self, epoint, **kwargs):
         if epoint == "user/login":
@@ -120,7 +128,9 @@ class Client:
             raise InvalidAppSecretError(f"Invalid app secret: {r.json()}.\n" + RESET)
 
         r.raise_for_status()
-        return r.json()
+        json = r.json()
+        logger.debug(json)
+        return json
 
     def auth(self, email, pwd):
         usr_info = self.api_call("user/login", email=email, pwd=pwd)

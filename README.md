@@ -43,6 +43,7 @@ options:
   -r, --reset        create/reset config file
   -p, --purge        purge/delete downloaded-IDs database
   -c, --show-config  show configuration
+  --debug            show debug information
 
 commands:
   run qobuz-dlp <command> --help for more info
