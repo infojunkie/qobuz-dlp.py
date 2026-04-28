@@ -16,16 +16,13 @@ _INFO_EXTRAS_REGEX = r'name:"\w+/(?P<timezone>{timezones})",info:"(?P<info>[\w=]
 _APP_ID_REGEX = re.compile(
     r'production:{api:{appId:"(?P<app_id>\d{9})",appSecret:"\w{32}"'
 )
-
 _BUNDLE_URL_REGEX = re.compile(
     r'<script src="(/resources/\d+\.\d+\.\d+-[a-z]\d{3}/bundle\.js)"></script>'
 )
-
+_PRIVATE_KEY_REGEX = re.compile(
+    r'privateKey:\s*"(?P<key>[A-Za-z0-9]{6,30})"'
+)
 _BASE_URL = "https://play.qobuz.com"
-_BUNDLE_URL_REGEX = re.compile(
-    r'<script src="(/resources/\d+\.\d+\.\d+-[a-z]\d{3}/bundle\.js)"></script>'
-)
-
 
 class Bundle:
     def __init__(self):
@@ -50,9 +47,16 @@ class Bundle:
     def get_app_id(self):
         match = _APP_ID_REGEX.search(self._bundle)
         if not match:
-            raise NotImplementedError("Failed to match APP ID")
+            raise NotImplementedError("Failed to match App ID")
 
         return match.group("app_id")
+
+    def get_private_key(self):
+        match = _PRIVATE_KEY_REGEX.search(self._bundle)
+        if not match:
+            raise NotImplementedError("Failed to match Private Key")
+
+        return match.group("key")
 
     def get_secrets(self):
         logger.debug("Getting secrets")

@@ -1,5 +1,4 @@
 import configparser
-import hashlib
 import logging
 import glob
 import os
@@ -25,14 +24,11 @@ else:
 CONFIG_PATH = os.path.join(OS_CONFIG, "qobuz-dl")
 CONFIG_FILE = os.path.join(CONFIG_PATH, "config.ini")
 QOBUZ_DB = os.path.join(CONFIG_PATH, "qobuz_dl.db")
-
+TOKEN_FILE = os.path.join(CONFIG_PATH, ".qobuz_dl.oauth.txt")
 
 def _reset_config(config_file):
     logging.info(f"{YELLOW}Creating config file: {config_file}")
     config = configparser.ConfigParser()
-    config["DEFAULT"]["email"] = input("Enter your email:\n- ")
-    password = input("Enter your password\n- ")
-    config["DEFAULT"]["password"] = hashlib.md5(password.encode("utf-8")).hexdigest()
     config["DEFAULT"]["default_folder"] = (
         input("Folder for downloads (leave empty for default 'Qobuz Downloads')\n- ")
         or "Qobuz Downloads"
@@ -56,6 +52,7 @@ def _reset_config(config_file):
     logging.info(f"{YELLOW}Getting tokens. Please wait...")
     bundle = Bundle()
     config["DEFAULT"]["app_id"] = str(bundle.get_app_id())
+    config["DEFAULT"]["private_key"] = bundle.get_private_key()
     config["DEFAULT"]["secrets"] = ",".join(bundle.get_secrets().values())
     config["DEFAULT"]["folder_format"] = DEFAULT_FOLDER
     config["DEFAULT"]["track_format"] = DEFAULT_TRACK
@@ -63,8 +60,12 @@ def _reset_config(config_file):
     config["DEFAULT"]["booklet_only"] = "false"
     with open(config_file, "w") as configfile:
         config.write(configfile)
+    try:
+        os.remove(TOKEN_FILE)
+    except OSError:
+        pass
     logging.info(
-        f"{GREEN}Config file updated. Edit more options in {config_file}"
+        f"{GREEN}Config file updated and token file deleted. Edit more options in {config_file}"
         "\nso you don't have to call custom flags every time you run "
         "a qobuz-dlp command."
     )
@@ -118,8 +119,6 @@ def main():
     config.read(CONFIG_FILE)
 
     try:
-        email = config["DEFAULT"]["email"]
-        password = config["DEFAULT"]["password"]
         default_folder = config["DEFAULT"]["default_folder"]
         default_limit = config["DEFAULT"]["default_limit"]
         default_quality = config["DEFAULT"]["default_quality"]
@@ -131,6 +130,7 @@ def main():
         no_cover = config.getboolean("DEFAULT", "no_cover")
         no_database = config.getboolean("DEFAULT", "no_database")
         app_id = config["DEFAULT"]["app_id"]
+        private_key = config["DEFAULT"]["private_key"]
         smart_discography = config.getboolean("DEFAULT", "smart_discography")
         folder_format = config["DEFAULT"]["folder_format"]
         track_format = config["DEFAULT"]["track_format"]
@@ -189,7 +189,7 @@ def main():
         smart_discography=arguments.smart_discography or smart_discography,
         booklet_only=arguments.booklet_only or booklet_only,
     )
-    qobuz.initialize_client(email, password, app_id, secrets)
+    qobuz.initialize_client(app_id, secrets, private_key, TOKEN_FILE)
 
     _handle_commands(qobuz, arguments)
 

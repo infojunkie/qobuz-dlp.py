@@ -3,6 +3,7 @@ import string
 import os
 import logging
 import time
+import urllib.parse
 
 from mutagen.mp3 import EasyMP3
 from mutagen.flac import FLAC

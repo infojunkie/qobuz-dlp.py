@@ -6,8 +6,12 @@ import hashlib
 import logging
 import time
 import requests
+import socket
+import threading
+import webbrowser
 from http.client import HTTPConnection
-import pprint
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import parse_qs, urlparse
 
 from qobuz_dl.exceptions import (
     AuthenticationError,
@@ -16,30 +20,40 @@ from qobuz_dl.exceptions import (
     InvalidAppSecretError,
     InvalidQuality,
 )
-from qobuz_dl.color import GREEN, YELLOW
-
-RESET = "Reset your credentials with 'qobuz-dlp -r'"
+from qobuz_dl.color import GREEN, YELLOW, RED
 
 logger = logging.getLogger(__name__)
 
-
 class Client:
-    def __init__(self, email, pwd, app_id, secrets):
-        logger.info(f"{YELLOW}Logging...")
+    def __init__(self, app_id, secrets, private_key, token_file):
+        logger.info(f"{YELLOW}Logging in...")
         self.secrets = secrets
+        self.token_file = token_file
         self.id = str(app_id)
+        self.uat = None
+        self.private_key = private_key
         self.session = requests.Session()
         self.session.headers.update(
             {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
                 "X-App-Id": self.id,
                 "Content-Type": "application/json;charset=UTF-8"
-
             }
         )
         self.base = "https://www.qobuz.com/api.json/0.2/"
         self.sec = None
-        self.auth(email, pwd)
+
+        try:
+            token_file = open(self.token_file, "r")
+            oauth_token = token_file.read().strip()
+        except:
+            oauth_token = None
+        else:
+            token_file.close()
+        if not oauth_token:
+            self.oauth()
+        else:
+            self.update_oauth_token(oauth_token)
         self.cfg_setup()
 
         '''Switches on logging of the requests module.'''
@@ -54,6 +68,12 @@ class Client:
             params = {
                 "email": kwargs["email"],
                 "password": kwargs["pwd"],
+                "app_id": self.id,
+            }
+        elif epoint == "oauth/callback":
+            params = {
+                "code": kwargs["code"],
+                "private_key": self.private_key,
                 "app_id": self.id,
             }
         elif epoint == "track/get":
@@ -84,7 +104,6 @@ class Client:
             }
         elif epoint == "favorite/getUserFavorites":
             unix = time.time()
-            # r_sig = "userLibrarygetAlbumsList" + str(unix) + kwargs["sec"]
             r_sig = "favoritegetUserFavorites" + str(unix) + kwargs["sec"]
             r_sig_hashed = hashlib.md5(r_sig.encode("utf-8")).hexdigest()
             params = {
@@ -113,19 +132,23 @@ class Client:
             }
         else:
             params = kwargs
+
         r = self.session.get(self.base + epoint, params=params)
         if epoint == "user/login":
             if r.status_code == 401:
-                raise AuthenticationError("Invalid credentials.\n" + RESET)
+                raise AuthenticationError(f"{RED}Invalid credentials")
             elif r.status_code == 400:
-                raise InvalidAppIdError("Invalid app id.\n" + RESET)
+                raise InvalidAppIdError(f"{RED}Invalid app id")
             else:
                 logger.info(f"{GREEN}Logged: OK")
+        elif epoint == "oauth/callback":
+            if r.status_code != 200:
+                raise AuthenticationError(f"{RED}OAuth callback error: {r.text}")
         elif (
             epoint in ["track/getFileUrl", "favorite/getUserFavorites"]
             and r.status_code == 400
         ):
-            raise InvalidAppSecretError(f"Invalid app secret: {r.json()}.\n" + RESET)
+            raise InvalidAppSecretError(f"{RED}Invalid app secret: {r.json()}")
 
         r.raise_for_status()
         json = r.json()
@@ -140,6 +163,96 @@ class Client:
         self.session.headers.update({"X-User-Auth-Token": self.uat})
         self.label = usr_info["user"]["credential"]["parameters"]["short_label"]
         logger.info(f"{GREEN}Membership: {self.label}")
+
+    def oauth(self):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('', 0))
+                port = s.getsockname()[1]
+
+            oauth_url = f"https://www.qobuz.com/signin/oauth?ext_app_id={self.id}&redirect_url=http://localhost:{port}"
+
+            class OAuthHandler(BaseHTTPRequestHandler):
+                code = None
+                def do_GET(self):
+                    parsed = urlparse(self.path)
+                    params = parse_qs(parsed.query)
+                    code = params.get("code", [params.get("code_autorisation", [""])[0]])[0]
+                    if code:
+                        OAuthHandler.code = code
+                        self.send_response(200)
+                        self.send_header("Content-type", "text/html")
+                        self.end_headers()
+                        self.wfile.write(b"<html><body style='font-family:sans-serif;text-align:center;padding:50px;background:#121212;color:white;'>")
+                        self.wfile.write(b"<h2 style='color:#6ee7f7'>Qobuz Login Successful!</h2>")
+                        self.wfile.write(b"<p>You can now close this tab and return to <strong>qobuz-dlp</strong>.</p>")
+                        self.wfile.write(b"</body></html>")
+                    else:
+                        self.send_response(400)
+                        self.end_headers()
+                        self.wfile.write(b"No code received.")
+
+                def log_message(self, format, *args):
+                    return # Silence logging
+
+            # Event to signal completion
+            completion_event = threading.Event()
+
+            logger.info(f"{YELLOW}OAuth login: Waiting for browser... (Link: {oauth_url})")
+            webbrowser.open(oauth_url)
+
+            # Start server in a thread to capture the code
+            def _run_server():
+                try:
+                    server = HTTPServer(('127.0.0.1', port), OAuthHandler)
+                    server.handle_request() # Wait for one request then exit
+                    server.server_close()
+
+                    if OAuthHandler.code:
+                        logger.debug(f"{YELLOW}OAuth login: Logging in with code...")
+                        callback = self.api_call("oauth/callback", code=OAuthHandler.code)
+                        if not callback["token"]:
+                            raise AuthenticationError(f"{RED}OAuth callback error: No token in response.")
+                        self.update_oauth_token(callback["token"], True)
+                    else:
+                        logger.error(f"{RED}OAuth login error: No code received.")
+                except Exception as e:
+                    logger.error(f"{RED}OAuth login error: {str(e)}")
+                finally:
+                    completion_event.set()
+
+            threading.Thread(target=_run_server, daemon=True).start()
+
+            # Wait for completion (blocking) - timeout after 3 minutes
+            if not completion_event.wait(timeout=180):
+                logger.error(f"{RED}OAuth error: Login timeout.")
+
+        except Exception as e:
+            logger.error(f"{RED}OAuth error: {str(e)}")
+
+    def update_oauth_token(self, oauth_token, coming_from_oauth=False):
+        self.uat = oauth_token
+        self.session.headers.update({"X-User-Auth-Token": self.uat})
+
+        # Complete login as data partner
+        r = self.session.post(self.base + "user/login",
+            headers={"Content-Type": "text/plain;charset=UTF-8"},
+            data="extra=partner"
+        )
+        if r.status_code != 200:
+            if coming_from_oauth:
+                raise AuthenticationError(f"{RED}OAuth partner login error: {r.text}")
+            else:
+                logger.warning(f"{RED}OAuth token invalid. Logging in from browser...")
+                self.uat = None
+                self.session.headers.pop("X-User-Auth-Token", None)
+                self.oauth()
+                return
+
+        with open(self.token_file, "w") as token_file:
+            token_file.write(oauth_token)
+
+        logger.info(f"{GREEN}OAuth login successful!")
 
     def multi_meta(self, epoint, key, id, type):
         total = 1
@@ -223,4 +336,4 @@ class Client:
                 break
 
         if self.sec is None:
-            raise InvalidAppSecretError("Can't find any valid app secret.\n" + RESET)
+            raise InvalidAppSecretError(f"{RED}Can't find any valid app secret")

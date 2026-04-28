@@ -1,5 +1,5 @@
 # qobuz-dlp
-A complete lossless and hi-res music downloader for [Qobuz](https://www.qobuz.com/).
+A lossless and hi-res music downloader for [Qobuz](https://www.qobuz.com/).
 
 This is a fork of the [original repo which has gone unmaintained](https://github.com/vitiko98/qobuz-dl).
 
@@ -150,12 +150,9 @@ from qobuz_dl.core import QobuzDL
 
 logging.basicConfig(level=logging.INFO)
 
-email = "your@email.com"
-password = "your_password"
-
 qobuz = QobuzDL()
-qobuz.get_tokens() # get 'app_id' and 'secrets' attrs
-qobuz.initialize_client(email, password, qobuz.app_id, qobuz.secrets)
+qobuz.get_tokens() # get 'app_id', 'secrets' and 'private_key' attrs
+qobuz.initialize_client(qobuz.app_id, qobuz.secrets, qobuz.private_key, '/path/to/token_file')
 
 qobuz.handle_url("https://play.qobuz.com/album/va4j3hdlwaubc")
 ```
@@ -163,7 +160,7 @@ qobuz.handle_url("https://play.qobuz.com/album/va4j3hdlwaubc")
 Attributes, methods and parameters have been named as self-explanatory as possible.
 
 ## Disclaimer and credits
-* This tool was written for educational purposes. I will not be responsible if you use this program in bad faith. By using it, you are accepting the [Qobuz API Terms of Use](https://static.qobuz.com/apps/api/QobuzAPI-TermsofUse.pdf).
+* By using this tool, you acknowledge the [Qobuz API Terms of Use](https://static.qobuz.com/apps/api/QobuzAPI-TermsofUse.pdf)
 * `qobuz-dlp` is not affiliated with Qobuz
-* `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98.
+* `qobuz-dlp` is a continuation of the work started with `qobuz-dl`, written by vitiko98
 * `qobuz-dl` was inspired by the discontinued Qo-DL-Reborn. This tool uses two modules from Qo-DL: `qopy` and `spoofer`, both written by Sorrow446 and DashLt.
