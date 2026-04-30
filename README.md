@@ -1,5 +1,5 @@
 # qobuz-dlp
-A lossless and hi-res music downloader for [Qobuz](https://www.qobuz.com/).
+A minimal lossless and hi-res music downloader for [Qobuz](https://www.qobuz.com/).
 
 This is a fork of the [original repo which has gone unmaintained](https://github.com/vitiko98/qobuz-dl).
 
@@ -34,7 +34,7 @@ qobuz-dlp # or qobuz-dlp.exe for Windows
 
 ## Usage
 ```
-A complete lossless and hi-res music downloader for Qobuz.
+A minimal lossless and hi-res music downloader for Qobuz.
 See usage examples at https://github.com/infojunkie/qobuz-dlp.py?tab=readme-ov-file#examples.
 
 options:

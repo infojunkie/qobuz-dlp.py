@@ -137,7 +137,7 @@ def qobuz_dl_args(
     parser = argparse.ArgumentParser(
         prog="qobuz-dlp",
         description=(
-            "A complete lossless and hi-res music downloader for Qobuz.\nSee usage examples at https://github.com/infojunkie/qobuz-dlp.py?tab=readme-ov-file#examples."
+            "A minimal lossless and hi-res music downloader for Qobuz.\nSee usage examples at https://github.com/infojunkie/qobuz-dlp.py?tab=readme-ov-file#examples."
         ),
         formatter_class=argparse.RawTextHelpFormatter,
     )
